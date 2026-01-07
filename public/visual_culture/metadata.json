@@ -1,0 +1,86 @@
+[
+    {
+        "filename": "chinese_01.jpg",
+        "caption": "Signs with Chinese characters",
+        "category": "CHINESE",
+        "original_filename": "4724_315_sing.jpg",
+        "id": "4724",
+        "bearing": "315",
+        "lat": 40.71461,
+        "lon": -73.99765
+    },
+    {
+        "filename": "chinese_05.jpg",
+        "caption": "Wah Wing Sang Funeral",
+        "category": "CHINESE",
+        "original_filename": "4601_90_sing.jpg",
+        "id": "4601",
+        "bearing": "90",
+        "lat": 40.71436,
+        "lon": -73.99943
+    },
+    {
+        "filename": "chinese_08.jpg",
+        "caption": "Residential & Commercial",
+        "category": "CHINESE",
+        "original_filename": "6731_180_sing.jpg",
+        "id": "6731",
+        "bearing": "180",
+        "lat": 40.71920,
+        "lon": -73.99652
+    },
+    {
+        "filename": "gothic_04.jpg",
+        "caption": "Gothic Spire",
+        "category": "GOTHIC",
+        "original_filename": "42599_90_sing.jpg",
+        "id": "42599",
+        "bearing": "90",
+        "lat": 40.79324,
+        "lon": -73.96553
+    },
+    {
+        "filename": "gothic_12.jpg",
+        "caption": "Cathedral Facade",
+        "category": "GOTHIC",
+        "original_filename": "23468_90_sing.jpg",
+        "id": "23468",
+        "bearing": "90",
+        "lat": 40.75836,
+        "lon": -73.99415
+    },
+    {
+        "filename": "gothic_24.jpg",
+        "caption": "Stone Arches",
+        "category": "GOTHIC",
+        "original_filename": "23834_270_sing.jpg",
+        "id": "23834",
+        "bearing": "270",
+        "lat": 40.75864,
+        "lon": -73.96429
+    },
+    {
+        "filename": "scaffolding_24.jpg",
+        "caption": "Green Safety Netting",
+        "category": "SCAFFOLDING",
+        "lat": 40.84431,
+        "lon": -73.93485,
+        "bearing": 270
+    },
+    {
+        "filename": "scaffolding_08.jpg",
+        "caption": "Pedestrian Safety Tunnel",
+        "category": "SCAFFOLDING",
+        "lat": 40.75629,
+        "lon": -74.00485,
+        "bearing": 90
+    },
+    {
+        "filename": "scaffolding_27.jpg",
+        "caption": "Financial District Retrofit",
+        "category": "SCAFFOLDING",
+        "lat": 40.70659,
+        "lon": -74.00807,
+        "bearing": 270
+    }
+]

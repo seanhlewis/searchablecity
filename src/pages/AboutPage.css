@@ -1,0 +1,2926 @@
+/* --- 1. RESET & VARS --- */
+:root {
+    --bg: #0e0e0e;
+    --text: #f0f0f0;
+    --muted: #888;
+    --accent: #ff3c3c;
+    --card-bg: rgba(0, 0, 0, 0.85);
+    /* --font-head: 'Public Sans', sans-serif; */
+    /* --font-body: 'Lora', serif; */
+    /* --font-mono: 'Roboto Mono', monospace; */
+    /* Using standard fonts or project default fonts for now to avoid Google Font reqs if offline */
+    --font-head: system-ui, -apple-system, sans-serif;
+    --font-body: Georgia, serif;
+    --font-mono: monospace;
+}
+
+.about-page {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+
+    /* Make this the scroll container */
+    height: 100vh;
+    width: 100vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    top: 0;
+    left: 0;
+    z-index: 50;
+}
+
+/* Fix Hero Pattern Visibility on Mobile */
+@media (max-width: 768px) {
+    .hero-bg-grid div {
+        opacity: 0.6;
+    }
+}
+
+/* Ensure images don't overflow */
+.about-page img {
+    display: block;
+    max-width: 100%;
+}
+
+.about-page h1,
+.about-page h2,
+.about-page h3 {
+    font-family: var(--font-head);
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+/* --- 2. HERO GRID (COVER) --- */
+#hero {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.hero-bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(33.33vh, 1fr));
+    /* Larger Square cells */
+    grid-template-rows: repeat(3, 33.33vh);
+    /* 3 rows filling 100vh */
+    justify-content: center;
+    /* Center the grid horizontally */
+    z-index: -1;
+    opacity: 0.4;
+}
+
+.hero-bg-grid div {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(100%) contrast(1.2);
+    /* Mobile Fix: Ensure scale covers gaps if any */
+    transform: scale(1.05);
+}
+
+.title-card {
+    background: #000;
+    padding: 3rem;
+    border: 1px solid #333;
+    text-align: center;
+    max-width: 800px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 1);
+}
+
+.title-card h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(to right, #fff, #999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    /* needed for clip */
+    margin-top: 0;
+}
+
+.title-card .meta {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .title-card .meta {
+        flex-direction: row;
+        gap: 0;
+    }
+}
+
+.author-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: text-decoration 0.2s;
+}
+
+.author-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    /* Ensure red underline even if text color changes in future */
+}
+
+/* --- 3. SCROLLYTELLING FRAMEWORK --- */
+#scrolly-section {
+    position: relative;
+}
+
+.footer-author-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, text-decoration 0.2s;
+}
+
+.footer-author-link:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #fff;
+}
+
+.sticky-container {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+    background: #000;
+}
+
+/* The Main Fullscreen Map */
+#main-map {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* Reverted to contain to ensure full height visibility without zoom */
+    transition: opacity 0.4s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Semantic Tag Indicator (Left Aligned) */
+.tag-indicator {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    text-align: right;
+    background: #000;
+    border: 1px solid #333;
+    padding: 1rem 1.5rem;
+    font-family: var(--font-mono);
+    z-index: 10;
+}
+
+.tag-indicator span {
+    display: block;
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.tag-indicator h2 {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin: 0;
+}
+
+/* The Scrolling Steps */
+.scrolly-overlay {
+    position: relative;
+    z-index: 2;
+    padding-bottom: 10vh;
+    pointer-events: none;
+    /* Let clicks pass to map */
+}
+
+.step {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* LEFT ALIGNMENT */
+    padding-left: 5vw;
+}
+
+.step-content {
+    background: var(--card-bg);
+    padding: 2rem;
+    max-width: 450px;
+    border-left: 4px solid var(--accent);
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    opacity: 0.3;
+    transition: opacity 0.5s;
+}
+
+.step-content h3 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.step-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc;
+    margin: 0;
+}
+
+.step.active .step-content {
+    opacity: 1;
+}
+
+/* Center the split-view step so it sits between East/West */
+.step[data-type="split"] {
+    justify-content: center;
+    padding-left: 0;
+}
+
+/* --- 4. SPECIAL COMPONENT: SPLIT VIEW (EAST/WEST) --- */
+#split-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    background: #000;
+}
+
+#split-view.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.split-pane {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    border-right: 1px solid #333;
+}
+
+.split-pane h3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    background: #000;
+    padding: 10px 20px;
+    font-family: var(--font-mono);
+    border: 1px solid #fff;
+    margin: 0;
+}
+
+.split-pane img {
+    width: 200%;
+    /* Zoom in to focus on details */
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+}
+
+/* Crop logic */
+#pane-west img {
+    left: 0;
+}
+
+/* Show left side of image */
+#pane-east img {
+    right: 0;
+}
+
+/* Show right side of image */
+
+
+/* --- 5. THE DATA STREAM (SIDEBAR LIST) --- */
+/* --- 5. THE DATA STREAM (SIDEBAR LIST) --- */
+#gallery-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Remove flex to allow absolute positioning of children */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    background: transparent;
+    z-index: 20;
+}
+
+.gallery-cards-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+#gallery-view.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Animations */
+@keyframes enterCard1 {
+    from {
+        opacity: 0;
+        transform: translate(50px, -50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes enterCard2 {
+    from {
+        opacity: 0;
+        transform: translate(50px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes enterCard3 {
+    from {
+        opacity: 0;
+        transform: translate(50px, 50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+.gallery-card {
+    position: absolute;
+    background: #111;
+    border: 1px solid #333;
+    padding: 0.5rem;
+    width: 330px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: rotate(0deg);
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.gallery-card img {
+    transition: border-color 0.3s ease;
+}
+
+.gallery-card:hover img {
+    border-color: #fff;
+}
+
+/* Connector Lines */
+/* Connector Lines Removed (Handled by SVG) */
+.gallery-card::before {
+    display: none;
+}
+
+#gallery-view.visible .gallery-card {
+    opacity: 1;
+}
+
+/* Card 1: Top Right - Spaced out */
+.gallery-cards-container .gallery-card:nth-child(1) {
+    top: 15%;
+    right: 25%;
+    animation: enterCard1 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    animation-delay: 0.1s;
+}
+
+.gallery-cards-container.gothic .gallery-card:nth-child(1) {
+    top: 10%;
+}
+
+.gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+    top: 15%;
+    right: 6%;
+    left: auto;
+}
+
+
+
+
+/* Card 2: Middle Right - Spaced out */
+.gallery-cards-container .gallery-card:nth-child(2) {
+    top: 50%;
+    right: 5%;
+    animation: enterCard2 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    animation-delay: 0.2s;
+}
+
+.gallery-cards-container.gothic .gallery-card:nth-child(2) {
+    top: 40%;
+}
+
+.gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+    top: 40%;
+    right: 25%;
+    left: auto;
+}
+
+
+
+
+/* Card 3: Bottom Right - Spaced out */
+.gallery-cards-container .gallery-card:nth-child(3) {
+    top: 65%;
+    right: 25%;
+    animation: enterCard3 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    animation-delay: 0.3s;
+}
+
+.gallery-cards-container.gothic .gallery-card:nth-child(3) {
+    top: 60%;
+}
+
+.gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+    top: 55%;
+    right: 5%;
+    left: auto;
+}
+
+
+
+.gallery-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+    border: 1px solid #222;
+    border-radius: 12px;
+}
+
+.gallery-card p {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #fff;
+    margin: 0;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+/* --- MAP OVERLAY --- */
+.manhattan-map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+    /* Removed background gradient to avoid darkening */
+    background: transparent;
+}
+
+.manhattan-map-overlay.visible {
+    opacity: 1;
+}
+
+.manhattan-map-overlay svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px var(--accent));
+}
+
+.map-coordinates {
+    position: absolute;
+    right: -20px;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    opacity: 0.7;
+    padding-left: 10px;
+}
+
+.map-coordinates-x {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    opacity: 0.7;
+}
+
+#data-stream-section {
+    display: flex;
+    background: #111;
+    border-top: 1px solid #333;
+    position: relative;
+    /* Removed fixed height/overflow to allow natural scroll */
+}
+
+@media (max-width: 768px) {
+
+    /* Mobile Repair V4: Visual Language "Window" */
+    #data-stream-section {
+        flex-direction: column;
+        display: flex;
+        height: 100vh;
+        /* Lock viewport */
+        overflow: hidden;
+        /* No outer scroll */
+    }
+
+    .stream-sticky-map {
+        width: 100% !important;
+        height: 50vh;
+        flex-shrink: 0;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+
+    .stream-list {
+        width: 100% !important;
+        height: 50vh;
+        overflow-y: auto;
+        /* Internal Scroll */
+        padding: 2rem 1rem;
+        background: #111;
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scroll */
+    }
+}
+
+.stream-sticky-map {
+    width: 60%;
+    height: 100vh;
+    /* Full viewport height */
+    position: sticky;
+    /* Make it stick */
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    border-right: 1px solid #222;
+}
+
+.stream-list {
+    width: 40%;
+    padding: 4rem 4rem 4rem 6rem;
+    /* Reverted padding to avoid blank space, handling stickiness via JS alignment */
+    display: flex;
+    flex-direction: column;
+}
+
+.stream-item {
+    padding: 2rem;
+    margin-bottom: 20vh;
+    /* Reverted to 20vh as reasonable compromise */
+    /* Reduced from attempt, but large enough for scroll triggers */
+    opacity: 0.3;
+    transition: opacity 0.5s, transform 0.5s;
+    cursor: pointer;
+    border-left: 1px solid transparent;
+}
+
+.stream-item:hover {
+    opacity: 0.7;
+}
+
+.stream-item.active {
+    opacity: 1;
+    transform: scale(1.05) translateX(10px);
+    border-left: 2px solid var(--accent);
+}
+
+.stream-item h4 {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 2.5rem;
+    /* Further increased for better separation */
+    /* Increased margin between title and caption */
+}
+
+/* --- 6. STATIC GRID BREAK --- */
+.static-grid-section {
+    padding: 6rem 2rem;
+    background: #0e0e0e;
+}
+
+.static-grid-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* Stack on mobile */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+.grid-item {
+    background: #1a1a1a;
+    border: 1px solid #333;
+}
+
+.grid-item .placeholder-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    font-family: var(--font-mono);
+    overflow: hidden;
+}
+
+.grid-item .placeholder-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.grid-item p {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+/* --- UTILS --- */
+footer {
+    padding: 4rem;
+    text-align: center;
+    border-top: 1px solid #333;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* --- 7. QUIZ SECTION --- */
+.quiz-section {
+    padding: 6rem 2rem;
+    background: #151515;
+    border-top: 1px solid #333;
+}
+
+.quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.quiz-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, #888);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.quiz-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* Stack on mobile */
+    gap: 2rem;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    min-height: 500px;
+}
+
+@media (min-width: 768px) {
+    .quiz-card {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .quiz-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60vh auto;
+        /* Even taller */
+    }
+
+    .quiz-image {
+        overflow: hidden;
+    }
+
+    .quiz-image img {
+        transform: scale(2.0);
+    }
+
+    .quiz-content {
+        padding: 1.5rem;
+    }
+
+    .quiz-content h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* --- MOBILE REFINEMENTS --- */
+@media (max-width: 768px) {
+
+    /* Machine Eye Carousel */
+    .carousel-card {
+        transform: scale(0.6) !important;
+        transform-origin: center center;
+    }
+
+    /* Gallery Cards (Gothic, Chinese, East/West, Scaffolding) */
+    .gallery-card {
+        transform: scale(0.6) !important;
+        transform-origin: center center;
+    }
+
+    /* Reduce Intro Scroll Distance */
+    /* Assuming the first .step is "INTRO" */
+    .step:first-of-type {
+        min-height: 25vh !important;
+    }
+
+    /* Footer Vertical fix removed (reverted in JSX) */
+
+    /* Timelapse Section Mobile Fix V4 */
+    .timelapse-layout {
+        grid-template-columns: 1fr !important;
+        gap: 2rem;
+    }
+
+    .timelapse-text {
+        text-align: center;
+        border-right: none;
+        border-bottom: 1px solid #333;
+        /* RESTORED BORDER */
+        padding-right: 0;
+        padding-bottom: 2rem;
+    }
+
+    .timelapse-visual {
+        width: 90%;
+        /* Not full edge-to-edge */
+        height: auto;
+        /* Let it scale */
+        aspect-ratio: 4/3;
+        margin: 0 auto;
+        /* CENTERED */
+        position: relative;
+    }
+
+    .timelapse-visual img {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        object-fit: cover;
+        transform: none;
+    }
+}
+
+.quiz-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.quiz-content {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.quiz-content h3 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.option-btn {
+    appearance: none;
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-btn:hover:not(:disabled) {
+    background: #333;
+    border-color: #666;
+}
+
+.option-btn.correct {
+    background: rgba(25, 227, 138, 0.2);
+    border-color: #19e38a;
+    color: #19e38a;
+}
+
+.option-btn.wrong {
+    background: rgba(255, 77, 77, 0.2);
+    border-color: #ff4d4d;
+    color: #ff4d4d;
+    opacity: 0.5;
+}
+
+.result-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: #111;
+    border: 1px solid #333;
+}
+
+.result-box.success {
+    border-color: #19e38a;
+    background: rgba(25, 227, 138, 0.1);
+}
+
+.result-box.failure {
+    border-color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.2);
+    /* Slightly more visible background */
+}
+
+.result-box.placeholder {
+    border-color: transparent;
+    background: transparent;
+    pointer-events: none;
+}
+
+.next-btn {
+    margin-top: 1rem;
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: var(--font-mono);
+}
+
+/* --- 8. TIMELAPSE SECTION --- */
+.timelapse-section {
+    padding: 8rem 4rem;
+    background: #000;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- 10. MAP EMBED SECTION --- */
+/* --- 10. MAP EMBED SECTION --- */
+.map-embed-section {
+    padding: 6rem 2rem;
+    background: #121212;
+    /* Distinct dark gray */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.embed-content-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.embed-text {
+    text-align: center;
+    margin: 0 auto 3rem auto;
+    max-width: 900px;
+}
+
+.embed-text h3 {
+    font-family: var(--font-header);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, #888);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    border: none;
+    padding: 0;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.embed-text p {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: #ccc;
+    margin: 0;
+    padding: 0;
+}
+
+.iframe-interactive-container {
+    width: 100%;
+    height: 90vh;
+    /* Bigger iframe */
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.fullscreen-link-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right align relative to the wrapper/iframe */
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.fullscreen-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-header);
+    font-size: 1.1rem;
+    /* Slightly larger */
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fullscreen-link:hover {
+    color: var(--accent);
+    gap: 0.8rem;
+    /* Arrow moves slightly */
+}
+
+.link-subtext {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.3rem;
+}
+
+.timelapse-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    align-items: center;
+}
+
+.timelapse-text {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #ccc;
+    text-align: right;
+    border-right: 1px solid #333;
+    padding-right: 4rem;
+}
+
+.timelapse-text p {
+    margin-bottom: 2rem;
+}
+
+.timelapse-text p:last-child {
+    margin-bottom: 0;
+}
+
+.timelapse-visual {
+    width: 300px;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px;
+    /* Slight rounding but mostly sharp */
+    /* Center it in its column */
+    margin: 0 auto 0 0;
+}
+
+.timelapse-visual img {
+    height: 100%;
+    width: 600px;
+    /* Force width wider than container to crop sides */
+    max-width: none;
+    /* Override any global max-width */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    filter: contrast(1.1) brightness(0.9);
+}
+
+.next-btn:hover {
+    background: #ccc;
+}
+
+/* --- 9. NARRATIVE SECTION --- */
+.narrative-section {
+    padding: 6rem 2rem;
+    background: #050505;
+    /* Slightly lighter than pure black */
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.narrative-content {
+    max-width: 700px;
+    text-align: left;
+}
+
+.narrative-content h3 {
+    font-family: var(--font-header);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+}
+
+.narrative-content p {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #ccc;
+    margin-bottom: 1.5rem;
+}
+
+.narrative-content p:last-child {
+    margin-bottom: 0;
+}
+
+.narrative-content em {
+    color: #fff;
+    font-style: italic;
+}
+
+/* --- 10. FOOTER --- */
+footer {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: #000;
+    color: #666;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    border-top: 1px solid #1a1a1a;
+}
+
+.author-link {
+    color: inherit;
+    /* Match surrounding text (#666) by default */
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+
+/* --- CAROUSEL --- */
+/* Transitions handled via .active class now */
+
+.carousel-container {
+    position: fixed;
+    /* Changed to fixed to ensure it stays in view relative to viewport if needed, or absolute relative to sticky container */
+    /* Sticky container is .stream-sticky-map which is good. keep Absolute. */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+
+    /* Container Transition */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-container.active {
+    opacity: 1;
+    pointer-events: auto;
+    /* Allow interactions when active */
+}
+
+/* Ensure clicks fall through container to card */
+.carousel-container.active .carousel-card {
+    pointer-events: auto;
+}
+
+.carousel-card {
+    position: absolute;
+    top: 50%;
+    right: 15%;
+    width: 340px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+
+    /* Animation State: Default (Hidden/Exited) */
+    opacity: 0;
+    transform: translateY(-40%);
+    /* Start lower */
+
+    transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.carousel-container.active .carousel-card {
+    opacity: 1;
+    transform: translateY(-50%);
+    /* Center position */
+}
+
+.carousel-card img {
+    width: 100%;
+    height: 320px;
+    /* Taller */
+    object-fit: cover;
+    border: 1px solid #333;
+    /* Match container border */
+    border-radius: 4px;
+    /* Inner image slightly rounded */
+    transition: border-color 0.3s ease;
+}
+
+.carousel-card:hover img {
+    border-color: #fff;
+}
+
+.carousel-card p {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: #ccc;
+    margin: 0;
+    line-height: 1.4;
+    min-height: 5.6rem;
+    /* Fixed height for ~4 lines to prevent resizing */
+}
+
+.carousel-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #222;
+    padding-top: 0.5rem;
+}
+
+.carousel-controls button {
+    background: transparent;
+    border: 1px solid #444;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.carousel-controls button:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.carousel-dots .dot {
+    width: 6px;
+    height: 6px;
+    background: #444;
+    border-radius: 50%;
+}
+
+.carousel-dots .dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+}
+
+/* Mini Gallery Row for Infrastructure Items */
+.mini-gallery-row {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping for 3x3 grid */
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.mini-gallery-row img {
+    width: 30%;
+    /* 3 * 30% + gaps ~= 100% */
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+
+.mini-gallery-row img:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.8);
+    z-index: 2;
+}
+
+/* Stream Gallery (Visual Language) */
+.stream-item {
+    position: relative;
+    /* Ensure we can position gallery absolutely */
+}
+
+.stream-gallery {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    position: absolute;
+    bottom: -6rem;
+    /* Position into the margin space */
+    right: 2rem;
+    /* Align with text padding */
+    width: 100%;
+    pointer-events: none;
+    /* Let clicks pass through if needed, though images might be clickable later? */
+    /* Fade out on right side */
+    mask-image: linear-gradient(to right, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);
+}
+
+.stream-gallery img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #444;
+    opacity: 0.8;
+}
+
+/* Compass Gallery Layout */
+.gallery-cards-container.compass .gallery-card:nth-child(1) {
+    top: 5%;
+    left: 2%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+}
+
+.gallery-cards-container.compass .gallery-card:nth-child(2) {
+    top: 60%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+}
+
+.gallery-cards-container.compass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.gallery-cards-container.compass .gallery-card {
+    pointer-events: auto;
+}
+
+/* --- CAROUSEL METADATA --- */
+.carousel-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    /* Matches map popup */
+    color: #aaa;
+}
+
+.meta-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Removed background/padding for subtle look */
+    color: #888;
+    font-weight: bold;
+    /* Match bearing style */
+    opacity: 1;
+    /* Reset opacity since color is dim */
+}
+
+.meta-right {
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+}
+
+.carousel-caption-wrapper {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 0.2rem;
+    /* Reduced margin */
+}
+
+.ai-caption-label {
+    display: block;
+    color: #fff;
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.1rem;
+    font-weight: 800;
+}
+
+.ai-caption-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: #ccc;
+    line-height: 1.4;
+    min-height: 4.2rem;
+    /* Exact height for ~4 lines to prevent resize */
+    display: block;
+    overflow: hidden;
+    /* Ensure it stays clean */
+}
+
+/* --- MOBILE REPAIR V5 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Conclusion: Remove vertical bar, Keep horizontal */
+    .timelapse-text {
+        border-right: none !important;
+        border-bottom: 1px solid #333 !important;
+        padding-right: 0 !important;
+        padding-bottom: 2rem !important;
+        text-align: center !important;
+    }
+
+    /* 2. Minigame: Remove Zoom, Align to bounds */
+    .quiz-image img {
+        transform: none !important;
+        object-fit: cover !important;
+    }
+
+    .quiz-card {
+        grid-template-rows: 50vh auto !important;
+        /* Adjust height if needed */
+    }
+
+    /* 3. Visual Language: Sticky Top Map, Scroll Over List */
+    #data-stream-section {
+        flex-direction: column !important;
+        display: block !important;
+        /* Flow layout */
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .stream-sticky-map {
+        width: 100% !important;
+        height: 50vh !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1 !important;
+        border-right: none !important;
+        border-bottom: 1px solid #333;
+    }
+
+    .stream-list {
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+        z-index: 10 !important;
+        background: #111 !important;
+        padding: 2rem 1rem !important;
+        min-height: 50vh !important;
+        /* Ensure it fills at least bottom half */
+    }
+}
+
+/* --- MOBILE REPAIR V6 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Conclusion: Left text, Centered Video */
+    .timelapse-text {
+        text-align: left !important;
+        /* REVERT CENTERING */
+        border-right: none !important;
+        border-bottom: 1px solid #333 !important;
+        padding-right: 0 !important;
+        padding-bottom: 2rem !important;
+    }
+
+    .timelapse-visual {
+        width: 90% !important;
+        height: auto !important;
+        min-height: 250px;
+        aspect-ratio: 4/3 !important;
+        margin: 0 auto !important;
+        /* CENTER VIDEO */
+        position: relative !important;
+    }
+
+    .timelapse-visual img {
+        width: 100% !important;
+        height: 100% !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        object-fit: cover !important;
+        transform: none !important;
+    }
+
+    /* 2. Gallery Cards: Half Size (Gothic, Chinese, Compass, Scaffolding) */
+    /* Target only .gallery-card, avoiding .carousel-card (Machine Eye) */
+    .gallery-card {
+        transform: scale(0.6) !important;
+        /* 60% size (safe bet vs 50%) */
+        transform-origin: center center !important;
+        width: auto !important;
+        max-width: 200px !important;
+        /* Force smaller constraint */
+    }
+
+    /* Compass specific overrides if needed to keep them on screen */
+    .gallery-cards-container.compass .gallery-card {
+        width: 180px !important;
+        transform: translate(-50%, -50%) scale(0.6) !important;
+    }
+}
+
+/* --- MOBILE REPAIR V7 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Header: Force Row Layout */
+    .title-card .meta {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Force Author to new line */
+    .title-card .meta span:last-child {
+        width: 100% !important;
+        flex-basis: 100% !important;
+        margin-top: 0.5rem !important;
+    }
+
+    /* 2. Machine Eye Carousel: Half Size */
+    .carousel-card {
+        transform: translateY(-50%) scale(0.6) !important;
+        /* Keep centering Y + Scale */
+        transform-origin: center center !important;
+        width: 300px !important;
+        /* Slightly reduce base width to fit better when scaled */
+        right: 5% !important;
+        /* Center it more? Or keep right align? */
+        /* If original was right: 15%, maybe move it closer to center if it's small */
+        right: 50% !important;
+        margin-right: -150px !important;
+        /* Center trick: right 50% + margin-right half width? No, simpler usually right:50%, transform: translateX(50%) */
+        /* But we have translateY(-50%) already. */
+        /* Let's try: left: 50%; transform: translate(-50%, -50%) scale(0.6); */
+        left: 50% !important;
+        right: auto !important;
+        transform: translate(-50%, -50%) scale(0.6) !important;
+    }
+}
+
+/* --- MOBILE REPAIR V8 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Conclusion: 3/4 Aspect Ratio (Desktop Ratio 300w:400h) */
+    .timelapse-visual {
+        width: 80% !important;
+        /* 80% width -> ~300px on mobile */
+        aspect-ratio: 3/4 !important;
+        /* 0.75 Ratio */
+        height: auto !important;
+        max-height: 60vh !important;
+        /* Safety constraint */
+        min-height: 0 !important;
+        margin: 0 auto !important;
+    }
+
+    /* 2. Gallery Cards: 3/4 Size (0.75) */
+    /* Target ordinary gallery cards */
+    .gallery-card {
+        transform: scale(0.75) !important;
+        transform-origin: center center !important;
+        /* Relax width constraint if set previously */
+        max-width: none !important;
+        width: auto !important;
+    }
+
+    /* Compass specific adjustments */
+    .gallery-cards-container.compass .gallery-card {
+        width: 320px !important;
+        /* Original base width */
+        transform: translate(-50%, -50%) scale(0.75) !important;
+    }
+
+    /* 3. Machine Eye Carousel: 3/4 Size (0.75) */
+    .carousel-card {
+        transform: translate(-50%, -50%) scale(0.75) !important;
+        /* Ensure distinct override */
+        width: 340px !important;
+        /* Base width */
+        left: 50% !important;
+        right: auto !important;
+    }
+}
+
+/* --- MOBILE REPAIR V9 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Double Spacing for Steps */
+    .step {
+        min-height: 200vh !important;
+        /* Doubled from 100vh */
+        padding-bottom: 20vh !important;
+        /* Extra padding */
+    }
+
+    /* 2. Machine Eye Carousel: Original Size (revert V7/V8 scale) */
+    .carousel-card {
+        transform: translate(-50%, -50%) !important;
+        /* Remove scale() */
+        width: 340px !important;
+        /* Ensure base width */
+        /* Center safely */
+        left: 50% !important;
+        right: auto !important;
+    }
+}
+
+/* End V9/Previous Block */
+
+/* --- MOBILE REPAIR V12 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Solid Info Boxes (User requested no transparency) */
+    .step-content {
+        background: #111 !important;
+        opacity: 1 !important;
+        border: 1px solid #333 !important;
+    }
+}
+
+/* --- MOBILE REPAIR V13 (OVERRIDES) --- */
+@media (max-width: 768px) {
+
+    /* 1. Visual Language Image: Full Height, Crop Width */
+    .stream-sticky-map {
+        height: 50vh !important;
+        overflow: hidden !important;
+    }
+
+    .stream-sticky-map img {
+        width: auto !important;
+        height: 100% !important;
+        max-width: none !important;
+        object-fit: cover !important;
+        /* Ensure it's centered if flex parent is used */
+    }
+
+    /* 2. Hero Background Grid: More Patterns, Smaller Items */
+    .hero-bg-grid {
+        /* 3/4 of 33.33vh is 25vh */
+        grid-template-columns: repeat(auto-fill, 25vh) !important;
+        grid-template-rows: repeat(auto-fill, 25vh) !important;
+
+        /* Expand container to allow off-side repeats */
+        width: 200% !important;
+        height: 150vh !important;
+
+        /* Center the expanded grid */
+        left: -50% !important;
+        top: -25vh !important;
+
+        /* Ensure grid cells fill nicely */
+        justify-content: center !important;
+        align-content: center !important;
+    }
+
+    .hero-bg-grid div {
+        transform: scale(1.02) !important;
+        /* Prevent gaps */
+    }
+}
+
+/* --- MOBILE REPAIR V14 (OVERRIDES) --- */
+@media (max-width: 768px) {
+    /* 1. LAYER FIX: Map on Top, List Behind */
+    /* This ensures that as the list scrolls UP, it goes BEHIND the sticky map */
+    /* keeping the top half "clean" and visible */
+
+    .stream-sticky-map {
+        z-index: 50 !important;
+        /* High Z-index */
+        position: sticky !important;
+        top: 0 !important;
+        background: #000 !important;
+        /* Ensure opaque background */
+        height: 33vh !important;
+    }
+
+    .stream-list {
+        z-index: 10 !important;
+        /* Low Z-index */
+        position: relative !important;
+        /* Ensure it flows normally but draws behind sticky */
+    }
+}
+
+/* --- DESKTOP REPAIR V20 (OVERRIDES) --- */
+@media (min-width: 768px) {
+
+    /* 1. Center Subtitle on Desktop */
+    .title-card .meta {
+        justify-content: center !important;
+    }
+
+    /* 2. Visual Language Image: Full Height, Crop Sides */
+    .stream-sticky-map img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+}
+
+/* --- DESKTOP REPAIR V21 (OVERRIDES) --- */
+@media (min-width: 768px) {
+
+    /* 1. Spacing for Subtitle Items on Desktop */
+    .title-card .meta {
+        gap: 0.5rem !important;
+        /* Reduced to 0.5rem */
+    }
+}
+
+/* --- ANIMATION POLISH V25 (OVERRIDES) --- */
+/* Ensure Carousel Fades In/Out Smoothly */
+.carousel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 60;
+    /* Higher than map (50) */
+    background: transparent;
+    /* Explicitly transparent per user request */
+}
+
+.carousel-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- MOBILE REFINEMENTS FINAL OVERRIDE --- */
+@media (max-width: 768px) {
+
+    .carousel-card,
+    .gallery-card {
+        transform: scale(0.6) !important;
+        transform-origin: center center !important;
+    }
+
+    .step:first-of-type {
+        min-height: 25vh !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V2) --- */
+@media (max-width: 768px) {
+
+    /* 1. General Sizing (3/4 of current) */
+    .gallery-card {
+        transform: scale(0.75) !important;
+        transform-origin: center center !important;
+        position: absolute !important;
+    }
+
+    /* Machine Eye Carousel - Bottom Right */
+    .carousel-container .carousel-card {
+        transform: scale(1.0) !important;
+        /* Exception */
+        position: absolute !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* --- CHINESE SECTION --- */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs */
+        top: 60px !important;
+        left: 20px !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(2) {
+        /* Funeral */
+        top: auto !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com */
+        top: 220px !important;
+        /* Below Signs */
+        left: 20px !important;
+    }
+
+    /* --- GOTHIC SECTION --- */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire */
+        top: 60px !important;
+        left: 20px !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(2) {
+        /* Facade */
+        top: auto !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches */
+        top: 220px !important;
+        /* Below Spire */
+        left: 20px !important;
+    }
+
+    /* --- COMPASS (EAST/WEST) SECTION --- */
+    /* Container inherits 'compass' class? No, checked JSX: className={activeTag ? activeTag.toLowerCase() : ''} */
+    /* Wait, activeTag for compass is 'Compass'. so class is 'compass'. items are [WEST, EAST]. */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West */
+        top: 60px !important;
+        left: 20px !important;
+    }
+
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East */
+        top: auto !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        left: auto !important;
+    }
+
+    /* --- SCAFFOLDING SECTION --- */
+    /* 1=Green, 2=Pedestrian, 3=Financial */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian Safety */
+        top: 60px !important;
+        left: 20px !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+        /* Financial Retrofit */
+        top: auto !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        /* Green Netting */
+        top: auto !important;
+        bottom: 180px !important;
+        /* Above Financial */
+        right: 20px !important;
+        left: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V3) --- */
+@media (max-width: 768px) {
+
+    /* 1. General Sizing: Width-based sizing, resetting transform */
+    .gallery-card {
+        width: 75vw !important;
+        height: auto !important;
+        transform: none !important;
+        /* Reset previous scale */
+        position: absolute !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .gallery-card img {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Machine Eye Carousel - Bottom Right */
+    .carousel-container .carousel-card {
+        width: 75vw !important;
+        /* 3/4 Size on mobile too? 'exception' meant keeping it robust? User said 'with exception of carousel' initially, but now 'carousel on bottom right' implies mobile specific. */
+        /* Wait, initial request: 'all image containers should be 3/4 ... exception of carousel'. */
+        /* Let's try 90vw for carousel to keep it prominent? Or 75vw consistent? */
+        /* I'll stick to 85vw for carousel */
+        width: 85vw !important;
+        transform: none !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* --- CHINESE SECTION --- */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(2) {
+        /* Funeral */
+        top: auto !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com */
+        top: 35vh !important;
+        /* Below Signs */
+        left: 0 !important;
+    }
+
+    /* --- GOTHIC SECTION --- */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(2) {
+        /* Facade */
+        top: auto !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches */
+        top: 35vh !important;
+        /* Below Spire */
+        left: 0 !important;
+    }
+
+    /* --- COMPASS (EAST/WEST) SECTION --- */
+    /* Ensure West (1) Top Left, East (2) Bottom Right */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East */
+        top: auto !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    /* --- SCAFFOLDING SECTION --- */
+    /* 1=Green, 2=Pedestrian, 3=Financial */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian Safety (Top Left) */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+        /* Financial Retrofit (Bottom Right) */
+        top: auto !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        /* Green Netting (Above Financial) */
+        top: auto !important;
+        bottom: 35vh !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V4 - SMALLER) --- */
+@media (max-width: 768px) {
+
+    /* 1. General Sizing: MUCH SMALLER (50vw) */
+    .gallery-card {
+        width: 50vw !important;
+        height: auto !important;
+        transform: none !important;
+        position: absolute !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+    }
+
+    .gallery-card img {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Machine Eye Carousel - Bottom Right */
+    .carousel-container .carousel-card {
+        width: 70vw !important;
+        /* Slightly larger than gallery, but smaller than before */
+        transform: none !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 !important;
+    }
+
+    /* --- CHINESE SECTION --- */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs - Top Left */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(2) {
+        /* Funeral - Bottom Right */
+        bottom: 0 !important;
+        right: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com - Below Signs */
+        top: 35vh !important;
+        left: 0 !important;
+    }
+
+    /* --- GOTHIC SECTION --- */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire - Top Left */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(2) {
+        /* Facade - Bottom Right */
+        bottom: 0 !important;
+        right: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches - Below Spire */
+        top: 35vh !important;
+        left: 0 !important;
+    }
+
+    /* --- COMPASS (EAST/WEST) SECTION --- */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West - Top Left */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East - Bottom Right */
+        bottom: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        /* Force reset */
+        left: auto !important;
+        /* Force reset */
+    }
+
+    /* --- SCAFFOLDING SECTION --- */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian - Top Left */
+        top: 0 !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+        /* Financial - Bottom Right */
+        bottom: 0 !important;
+        right: 0 !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        /* Green Netting - Above Financial */
+        bottom: 35vh !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V5) --- */
+@media (max-width: 768px) {
+    .gallery-cards-container {
+        height: 100dvh !important;
+        /* Dynamic Viewport Height */
+    }
+
+    /* 1. General Sizing: 3/4 of previous 50vw -> ~38vw */
+    .gallery-card {
+        width: 38vw !important;
+        height: auto !important;
+        transform: none !important;
+        position: absolute !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        /* seamless */
+        border: none !important;
+    }
+
+    .gallery-card img {
+        width: 100% !important;
+        height: auto !important;
+        border: 1px solid #333 !important;
+        /* Restore border on img */
+    }
+
+    .gallery-card p {
+        display: none !important;
+        /* User implies tight packing/visuals only? Or keeping caption? Keep caption but ensure tight. */
+        /* If gap unwanted, maybe caption is issue. Let's keep caption small. */
+        font-size: 0.6rem !important;
+    }
+
+    /* Carousel Config */
+    .carousel-container .carousel-card {
+        width: 60vw !important;
+        transform: none !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 !important;
+    }
+
+    .carousel-container .carousel-card img {
+        aspect-ratio: 1 / 1 !important;
+        object-fit: cover !important;
+    }
+
+    /* --- POSITIONING LOGIC --- */
+    /* Top Left items: Offset by 90px to clear header */
+    /* Bottom Right items: Offset by 0/5px */
+
+    /* CHINESE */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs (Top Left) */
+        top: 90px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com (Below Signs) */
+        top: calc(90px + 38vw + 5px) !important;
+        /* Stacked */
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(2) {
+        /* Funeral (Bottom Right) */
+        bottom: 5px !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* GOTHIC */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire (Top Left) */
+        top: 90px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches (Below Spire) */
+        top: calc(90px + 38vw + 5px) !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(2) {
+        /* Facade (Bottom Right) */
+        bottom: 5px !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* COMPASS */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West (Top Left) */
+        top: 90px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East (Bottom Right) */
+        bottom: 5px !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    /* SCAFFOLDING */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian (Top Left) */
+        top: 90px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+        /* Financial (Bottom Right) */
+        bottom: 5px !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        /* Green Netting (Above Financial) */
+        bottom: calc(5px + 38vw + 50px) !important;
+        /* Stacked up */
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V6) --- */
+@media (max-width: 768px) {
+
+    /* 1. Restore Captions */
+    .gallery-card p {
+        display: block !important;
+        font-size: 0.7rem !important;
+        margin-top: 5px !important;
+        color: #fff !important;
+        background: rgba(0, 0, 0, 0.5);
+        /* legibility */
+        width: 100%;
+        text-align: center;
+    }
+
+    /* 2. Carousel Aspect Ratio Fix */
+    .carousel-container .carousel-card {
+        aspect-ratio: 1 / 1 !important;
+        height: auto !important;
+        /* Let aspect ratio drive height */
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    .carousel-container .carousel-card img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    /* 3. East Image Fix - ensure it matches Facade matches */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        bottom: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+        margin-bottom: 5px !important;
+        /* Safe zone */
+    }
+
+    /* Ensure West goes top left */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 90px !important;
+        left: 0 !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V7) --- */
+@media (max-width: 768px) {
+
+    /* 1. Container Fixes */
+    .gallery-cards-container {
+        width: 100vw !important;
+        height: 100dvh !important;
+        left: 0 !important;
+        top: 0 !important;
+    }
+
+    /* 2. Caption Padding Removal */
+    .gallery-card p {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        padding-bottom: 2px !important;
+    }
+
+    /* 3. Carousel: Force Square and Move Up */
+    /* User said: 'carousel needs to be brought up a bit' and 'still too tall' */
+    .carousel-container .carousel-card {
+        width: 60vw !important;
+        height: 60vw !important;
+        /* Explicit square */
+        bottom: 15vh !important;
+        /* Moved up from 0 */
+        right: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+    }
+
+    .carousel-container .carousel-card img {
+        height: 100% !important;
+        width: 100% !important;
+        object-fit: cover !important;
+    }
+
+    /* 4. Top Left Alignment: Move Up */
+    /* User said: 'go up as high as the top of query pattern tag... align with it' */
+    /* Query Pattern is usually around top 20px-40px. */
+    /* I'll try top: 60px to be safe but higher than 90px */
+
+    /* CHINESE */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs */
+        top: 60px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com */
+        top: calc(60px + 38vw + 0px) !important;
+        /* No gap */
+        left: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* GOTHIC */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire */
+        top: 60px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches */
+        top: calc(60px + 38vw + 0px) !important;
+        left: 0 !important;
+    }
+
+    /* SCAFFOLDING */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian */
+        top: 60px !important;
+        left: 0 !important;
+    }
+
+    /* COMPASS (EAST/WEST) */
+    /* User said West off screen? Scale appropriately */
+    /* I will use same 38vw for consistency */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West */
+        top: 60px !important;
+        left: 0 !important;
+    }
+
+    /* East Fix: 'never seems to go past center...' */
+    /* forcing right:0 on 100vw container */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East */
+        bottom: 5px !important;
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V8) --- */
+@media (max-width: 768px) {
+
+    /* 1. Container Fixes - FORCE FULL WIDTH */
+    .gallery-cards-container {
+        max-width: none !important;
+        width: 100vw !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 2. Carousel Fix: Card height auto, Image square */
+    .carousel-container .carousel-card {
+        width: 70vw !important;
+        height: auto !important;
+        /* Let height adapt to content */
+        aspect-ratio: auto !important;
+        /* Reset aspect on card */
+        bottom: 120px !important;
+        /* Lifted up for controls */
+        right: 0 !important;
+        left: auto !important;
+        top: auto !important;
+        display: block !important;
+        /* Reset flex if needed, or keep flex col */
+    }
+
+    .carousel-container .carousel-card img {
+        width: 100% !important;
+        aspect-ratio: 1 / 1 !important;
+        /* Image itself is square */
+        object-fit: cover !important;
+        height: auto !important;
+    }
+
+    /* 3. Positioning Logic with Caption Buffer */
+    /* Top offset: 40px */
+    /* Buffer for stacked items: 38vw (image) + 60px (caption) */
+
+    /* CHINESE */
+    .gallery-cards-container.chinese .gallery-card:nth-child(1) {
+        /* Signs */
+        top: 40px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        /* Res/Com */
+        top: calc(40px + 38vw + 60px) !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.chinese .gallery-card:nth-child(2) {
+        /* Funeral */
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+        top: auto !important;
+    }
+
+    /* GOTHIC */
+    .gallery-cards-container.gothic .gallery-card:nth-child(1) {
+        /* Spire */
+        top: 40px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        /* Arches */
+        top: calc(40px + 38vw + 60px) !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.gothic .gallery-card:nth-child(2) {
+        /* Facade */
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    /* SCAFFOLDING */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(2) {
+        /* Pedestrian */
+        top: 40px !important;
+        left: 0 !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(3) {
+        /* Financial */
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        /* Green Netting */
+        bottom: calc(0px + 38vw + 80px) !important;
+        /* Stacked up from bottom */
+        right: 0 !important;
+        left: auto !important;
+    }
+
+    /* COMPASS */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        /* West */
+        top: 40px !important;
+        left: 0 !important;
+    }
+
+    /* FORCE EAST RIGHT */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        /* East */
+        bottom: 0 !important;
+        right: 0 !important;
+        left: auto !important;
+        top: auto !important;
+        margin-right: 0 !important;
+        /* Ensure no margin prevents right edge */
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V9) --- */
+@media (max-width: 768px) {
+
+    /* 1. Gap & Rounding Fix */
+    .gallery-card {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+        border-radius: 8px !important;
+        /* Restore card radius */
+        overflow: hidden !important;
+        /* mask children */
+        border: 1px solid #333 !important;
+        /* Move border to card */
+        background: #111 !important;
+    }
+
+    .gallery-card img {
+        margin: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border: none !important;
+        /* Handled by card now */
+        display: block !important;
+    }
+
+    .gallery-card p {
+        margin-top: 0 !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        background: #111 !important;
+        /* Match card bg */
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* 2. Scroll Length Extension */
+    .step:not(:first-of-type) {
+        min-height: 120vh !important;
+        /* Extend content sections */
+        margin-bottom: 10vh !important;
+    }
+
+    .step:first-of-type {
+        min-height: 35vh !important;
+        /* Extend intro a bit */
+    }
+
+    /* 3. Fade-In Sequencing (Background First) */
+    /* Delay container visibility transitions */
+    #gallery-view.visible,
+    .carousel-container.active {
+        transition-delay: 0.6s !important;
+    }
+
+    /* Delay card entry animations */
+    .gallery-card {
+        animation-delay: 0.8s !important;
+        /* Wait for container + extra */
+    }
+
+    /* Carousel card specific - it has no animation usually, just opacity on container. 
+       But if it did.. */
+
+    /* 4. Fix Carousel Controls Layout */
+    /* If flex changed to column, controls might look weird. */
+    /* Carousel card has own layout. Ensure it works. */
+    .carousel-container .carousel-card {
+        /* Keep using flex column from V6 but refine gaps */
+        gap: 0 !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+
+    .carousel-container .carousel-card img {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V10) --- */
+@media (max-width: 768px) {
+    /* Tightening Gaps (Reducing buffer from 60px/80px to 45px/50px) */
+
+    /* CHINESE: Res/Com below Signs */
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 45px) !important;
+        /* Was +60px */
+    }
+
+    /* GOTHIC: Arches below Spire */
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 45px) !important;
+        /* Was +60px */
+    }
+
+    /* SCAFFOLDING: Green Netting above Financial */
+    /* Financial is at bottom: 0. Height approx 38vw + caption. */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        bottom: calc(0px + 38vw + 50px) !important;
+        /* Was +80px */
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V11) --- */
+@media (max-width: 768px) {
+    /* AGGRESSIVE GAP REDUCTION */
+    /* Previous buffer was ~45-60px. Reducing to ~15px above height estimate. */
+
+    /* CHINESE: Signs (Top) -> Res/Com (Below) */
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 15px) !important;
+        /* Tight stack */
+    }
+
+    /* GOTHIC: Spire (Top) -> Arches (Below) */
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 15px) !important;
+        /* Tight stack */
+    }
+
+    /* SCAFFOLDING: Green Netting (Above) -> Financial (Bottom) */
+    /* Financial is at bottom: 0. Green needs to be above it. */
+    /* Financial Height ~ 38vw + caption. */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        bottom: calc(0px + 38vw + 20px) !important;
+        /* Tight stack */
+        top: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V12) --- */
+@media (max-width: 768px) {
+    /* FINE-TUNED GAPS */
+
+    /* CHINESE: Unchanged (Good) */
+    .gallery-cards-container.chinese .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 15px) !important;
+    }
+
+    /* GOTHIC: Increased Tiny Amount (+10px) */
+    .gallery-cards-container.gothic .gallery-card:nth-child(3) {
+        top: calc(40px + 38vw + 25px) !important;
+        /* Was 15px */
+    }
+
+    /* SCAFFOLDING: Increased Small Amount (+25px) to fix overlap */
+    .gallery-cards-container.scaffolding .gallery-card:nth-child(1) {
+        bottom: calc(0px + 38vw + 45px) !important;
+        /* Was 20px */
+        top: auto !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V13) --- */
+@media (max-width: 768px) {
+    /* COMPASS (Ghost in Machine) FIX */
+    /* Syncing exactly with Gothic section logic */
+
+    /* 1. WEST (W 115th St) - Matches Gothic Spire */
+    /* Target: Top Left, 40px offset usually */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 40px !important;
+        left: 0 !important;
+        bottom: auto !important;
+        right: auto !important;
+    }
+
+    /* 2. EAST (east side of river) - Matches Cathedral Facade */
+    /* Target: Bottom Right */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        bottom: 5px !important;
+        /* Matches earlier V5/V6 logic, slightly off edge for symmetry */
+        right: 0 !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 !important;
+        transform: none !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V14) --- */
+@media (max-width: 768px) {
+    /* COMPASS FIXES V14 */
+
+    /* 1. EAST: Half Size (~19-20vw) */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        width: 20vw !important;
+        /* Half of 38vw */
+        bottom: 5px !important;
+        right: 0 !important;
+    }
+
+    /* 2. WEST: Fix 'Off Top Left' */
+    /* Previous top: 40px left:0. Increasing top and left buffer. */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 80px !important;
+        /* Move down */
+        left: 10px !important;
+        /* Move right */
+        width: 38vw !important;
+        /* Maintain standard size for West */
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V15) --- */
+@media (max-width: 768px) {
+    /* COMPASS FIXES V15 */
+
+    /* 1. EAST: Match West Size (~38vw) */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        width: 38vw !important;
+        /* Back to standard */
+        bottom: 5px !important;
+        right: 0 !important;
+    }
+
+    /* 2. WEST: Move Further Down and Right */
+    /* Previous: top: 80px, left: 10px. Increasing buffers. */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 100px !important;
+        /* Further down */
+        left: 30px !important;
+        /* Further right */
+        width: 38vw !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V16) --- */
+@media (max-width: 768px) {
+    /* COMPASS FIXES V16 */
+
+    /* 1. WEST: Move Further Right (50px) to clear left edge */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 100px !important;
+        left: 50px !important;
+        /* increased buffer */
+        width: 38vw !important;
+        /* Ensure match */
+        right: auto !important;
+    }
+
+    /* 2. EAST: Ensure Size Match */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        width: 38vw !important;
+        /* Ensure match */
+        bottom: 5px !important;
+        right: 0 !important;
+    }
+}
+
+/* --- MOBILE LAYOUT CUSTOMIZATION (FINAL OVERRIDE V17) --- */
+@media (max-width: 768px) {
+    /* COMPASS FIXES V17 */
+
+    /* 1. WEST: Move Further Right (70px) and Increase Size */
+    /* Previous: 50px offset, 38vw width */
+    .gallery-cards-container.compass .gallery-card:nth-child(1) {
+        top: 100px !important;
+        left: 70px !important;
+        /* Move further right */
+        width: 50vw !important;
+        /* Increase size to compensate for visual mismatch */
+        right: auto !important;
+    }
+
+    /* 2. EAST: Maintain Standard Size */
+    .gallery-cards-container.compass .gallery-card:nth-child(2) {
+        width: 38vw !important;
+        bottom: 5px !important;
+        right: 0 !important;
+    }
+}
+
+/* --- MAP ANIMATIONS V2 --- */
+@keyframes drawMapLine {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.5;
+    }
+}
+
+@keyframes drawMapLineHover {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popInPin {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    70% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mask animation for "drawing" dashed lines without shifting dots */
+@keyframes revealLineMask {
+    from {
+        stroke-dashoffset: 100;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.map-line-animated {
+    opacity: 0;
+    animation: drawMapLine 1.2s ease-out forwards;
+}
+
+.map-line-animated.hovered {
+    animation: drawMapLineHover 1.2s ease-out forwards;
+}
+
+.map-line-mask {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: revealLineMask 1.2s ease-out forwards;
+}
+
+.map-pin-animated {
+    opacity: 0;
+    animation: popInPin 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* --- MOBILE FIXES: EQUAL MINIGAME BUTTONS --- */
+@media (max-width: 768px) {
+    .options-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.8rem;
+        width: 100%;
+        /* Ensure columns don't blow out */
+        grid-auto-rows: 1fr;
+    }
+
+    .option-btn {
+        width: 100% !important;
+        height: 100% !important;
+        flex: unset !important;
+        min-height: 4rem;
+        /* Increased min-height for touch targets */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 !important;
+        /* Typographic Fixes */
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        padding: 0.5rem !important;
+        white-space: normal !important;
+        word-break: break-word;
+        text-align: center;
+    }
+}

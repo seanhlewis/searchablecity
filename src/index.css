@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-accent: #000000;
+  --color-panel: rgba(255, 255, 255, 0.95);
+  --shadow-panel: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow: hidden;
+  /* App handles scrolling */
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Mapbox overrides */
+.mapboxgl-ctrl-logo {
+  opacity: 0.6;
+}
+
+.mapboxgl-ctrl-bottom-right {
+  opacity: 0.8;
+}
+
+/* Fluid animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-trigger .hover-target {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hover-trigger:hover .hover-target {
+  opacity: 1;
+}
+
+/* Custom Mapbox Attribution Defaults */
+.dark .mapboxgl-ctrl.mapboxgl-ctrl-attrib {
+  background-color: #292929 !important;
+}
+
+.dark .mapboxgl-ctrl-attrib a {
+  color: #9F9F9F !important;
+}
+
+.mapbox-improve-map {
+  display: none !important;
+}
+
+/* Mobile Overrides */
+@media (max-width: 768px) {
+
+  /* Hide attribution 'i' box on mobile */
+  .mapboxgl-ctrl-attrib {
+    display: none !important;
+  }
+
+  /* Half-size Mapbox logo */
+  .mapboxgl-ctrl-logo {
+    transform: scale(0.5);
+    transform-origin: bottom left;
+  }
+}
