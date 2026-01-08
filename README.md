@@ -9,7 +9,7 @@
 
 I ran a Vision Language Model on hundreds of thousands of images of Manhattan to create a searchable visual index of the city. This project moves beyond the rigid grid of addresses to map the invisible systems (culture, wealth, infrastructure, etc.) that actually define the urban experience.
 
-### [🌐 Interactive Map & Full Story](https://seanhardestylewis.com/projects)
+### [🌐 Interactive Map & Full Story](https://searchable.city/about)
 
 ---
 
@@ -69,7 +69,7 @@ This was the most unexpected finding in the dataset. When we queried **"East"** 
   </tr>
 </table>
 
-Is it reading street signs? Analyzing the shadows based on the time of day? Or does the VLM have an innate, high-dimensional sense of the city's orientation? It suggests the model isn't just detecting objects, but understanding context.
+Is it reading street signs? Shadows? The model somehow figured out which way it was facing just by analyzing the image data.
 
 ### The Decoded City
 
@@ -91,14 +91,14 @@ When you stop looking for addresses and start looking for *patterns*, the invisi
 </table>
 
 #### Perpetual Construction
-A map of "scaffolding" is a map of flux. It shows where money is being spent on renovation, and where Local Law 11 is forcing facade repairs. It captures the temporary city, frozen in 2025.
+Mapping scaffolding is effectively a way to map change. It shows where money is being spent on renovation, and where Local Law 11 is forcing facade repairs. It captures the temporary city, frozen in 2025.
 
 #### The Air Conditioner
 Consider the air conditioner. As modern HVAC systems retro-fit the skyline, the window unit becomes a marker of building age and socioeconomic strata. A semantic query instantly lights up every wall sleeve or hanging unit across the boroughs, revealing the city's pace of renovation in real-time.
 
 ### The Visual Language
 
-I found over 3,000 unique descriptive tags. Here are some of the weirdest correlations:
+I found over 3,000 unique descriptive tags. Here are some of the ones I thought were interesting (more on [the Searchable City website](https://searchable.city/about)):
 
 <table>
   <thead>
@@ -158,7 +158,7 @@ I found over 3,000 unique descriptive tags. Here are some of the weirdest correl
 
 ### The Blind Spots
 
-The machine eye is not omniscient. It is bound by the same physics as the human eye. A fire hydrant can vanish behind a double‑parked delivery truck. A basement entrance can dissolve into darkness.
+However, this approach has inherent limitations. It is bound by the same physics as the human eye. A fire hydrant can vanish behind a double‑parked delivery truck. A basement entrance can dissolve into darkness.
 
 <img width="1091" height="306" alt="image" src="https://github.com/user-attachments/assets/d9c0e078-d1fa-4c69-9790-54f6ee7f94ca" />
 
