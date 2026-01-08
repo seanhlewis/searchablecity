@@ -132,7 +132,7 @@ I found over 3,000 unique descriptive tags. Here are some of the ones I thought 
       </td>
       <td valign="top">
         <h3>TRASH</h3>
-        <p>Correlates strictly with commercial density and foot traffic.</p>
+        <p>Correlates with commercial density and foot traffic.</p>
       </td>
     </tr>
     <tr>
