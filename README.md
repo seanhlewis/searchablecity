@@ -17,9 +17,6 @@ I ran a Vision Language Model on hundreds of thousands of images of Manhattan to
 
 Maps are blind. To Google or Apple, the city is a grid of addresses and listings. The rest of the world gets flattened. The map can tell you where a pharmacy is, but it cannot tell you where the fire escapes are, where the murals are, or where the street trees actually cast shade.
 
-<img width="1118" height="423" alt="image" src="https://github.com/user-attachments/assets/2f32ba90-c6bd-4a09-84d1-e11c66c1e604" />
-<br>
-
 I sought to address this mapping gap. By processing street view imagery with a Vision Language Model (VLM), I did not ask the computer for coordinates; but rather asked it to *look*. At scale, it effectively translated the visual noise of the street into structured data, turning pixels into patterns and moving from a map of location to a map of meaning.
 
 ### Inspiration
