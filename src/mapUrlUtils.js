@@ -58,15 +58,6 @@ export function encodeMapState({
         const parts = [];
         Object.entries(segmentThemeOverrides).forEach(([idx, themeId]) => {
             if (themeId === 'custom') {
-                // If we support per-segment custom colors, we need that data.
-                // Assuming segmentCustomColors[idx] exists
-                // For now, simpler implementation: just global custom colors for overrides? 
-                // "If I have multiple keywords and formatted them... specific colors"
-                // The current App structure assumes Global Custom Colors. 
-                // Does 'segmentThemeOverrides' allow 'custom'? 
-                // The current logic passes 'id' to setSegmentThemeOverrides.
-                // If id is 'custom', it uses GLOBAL custom colors.
-                // So valid check:
                 const bg = customColors.bg.replace('#', '');
                 const hl = customColors.hl.replace('#', '');
                 parts.push(`${idx}Z${bg}-${hl}`);
@@ -99,8 +90,7 @@ export function decodeMapState(tStr) {
     const [mainPart, overridePart] = tStr.split('~');
 
     // Parse Flags & Main Theme
-    // We scan mainPart.
-    // Known flags: l, p, c, r, n
+    // Flags: l, p, c, r, n
     // Theme chars: t, y, f, o, m, z
     // z is special (followed by hex)
 
@@ -125,8 +115,6 @@ export function decodeMapState(tStr) {
             // Advance i
             const rest = mainPart.slice(i + 1);
             // Match hex pattern: ([0-9a-fA-F]{3,6})-([0-9a-fA-F]{3,6})
-            // Simple approach: take next 13 chars? (6+1+6)
-            // Or Regex match from this point
             const match = rest.match(/^([0-9a-fA-F]{3,6})[-_]([0-9a-fA-F]{3,6})/);
             if (match) {
                 state.customColors = {
@@ -152,17 +140,9 @@ export function decodeMapState(tStr) {
                 const content = idxMatch[2];
 
                 if (content.startsWith('Z')) {
-                    // Custom Color Override
-                    // Currently app only supports Global Custom Colors, so 'custom' usually means use Global Custom.
-                    // But if protocol supports specific custom colors, we'd need to extend app state.
-                    // For now, map to 'custom' theme ID.
+
                     state.segmentThemeOverrides[idx] = 'custom';
 
-                    // Note: If we really wanted unique Custom Colors per segment, we'd need to store them in a dictionary
-                    // e.g. segmentCustomColors[idx] = { ... }
-                    // The App does not currently seem to contain 'segmentCustomColors' state in MapApplication.
-                    // It uses 'customColors' (global). 
-                    // So we just set ID to 'custom'. 
                 } else {
                     const themeId = CHAR_THEME_MAP[content];
                     if (themeId) state.segmentThemeOverrides[idx] = themeId;
