@@ -249,46 +249,7 @@ function MapApplication() {
 
     const visibleTags = useMemo(() => {
         if (!selectedLocation) return [];
-        // Safety check for tags presence (conceptually lean locations don't has tags, 
-        // BUT we are using the original locations logic for selectedLocation? 
-        // Wait, 'locations.json' is now lean. It DOES NOT have 't' (tags).
-        // 
-        // CRITICAL ISSUE: 'selectedLocation' comes from 'locations' array.
-        // 'locations' is loaded from 'locations.json' which is LEAN (No 't').
-        // So 'selectedLocation.t' will be undefined!
-        // 
-        // This will crash: 'selectedLocation.t.filter'
-        // 
-        // I MUST fix this.
-        // 'selectedLocation' needs to fetch or have tags?
-        // 
-        // The original locations.json had tags. I stripped them.
-        // How do we display tags now?
-        // 
-        // I need to fetch tags for the selected location?
-        // Or store them?
-        // 
-        // If I can't get tags, I should disable the tag cloud or fetch it.
-        // 
-        // Option: In the 'bearings' shard, I stored the tags too?
-        // Step 4207: "shards[shard_key][lid] = tag_bearing_dict"
-        // The dict keys ARE the tags!
-        // 
-        // So I can Re-construct 't' (tags) from the fetched bearing shard!
-        // 
-        // When selecting a location (handleSelectLocation), I fetch the shard.
-        // I should then hydrate the 'selectedLocation' with the tags found in the shard.
-        // 
-        // But 'visibleTags' runs on 'selectedLocation'.
-        // 
-        // Fix:
-        // 1. Restore the code.
-        // 2. Modify 'visibleTags' to safeguard against missing 't'.
-        // 3. Modify 'handleSelectLocation' to populate 't' from the shard.
-
-        // For now, I will add the safeguard in the restore.
         if (!selectedLocation.t) return [];
-
 
         const filtered = selectedLocation.t.filter(t => {
             // Safety: If index is empty (failed load), show all tags
@@ -367,7 +328,7 @@ function MapApplication() {
 
     // URL Params
 
-    // DEBOUNCE 500ms as requested
+    // DEBOUNCE 500ms 
     const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
     const [viewAngle, setViewAngle] = useState(0);
@@ -428,7 +389,7 @@ function MapApplication() {
                 // Populate allTags for autocomplete
                 allTags.current = manifest.map(item => item[0]);
 
-                // tagCountsRef is already initialized, do not reset it here to preserve pre-fetched shards
+                // tagCountsRef is already initialized, we dont reset it here to preserve pre-fetched shards
 
 
                 setIsIndexReady(true);
@@ -1294,22 +1255,6 @@ function MapApplication() {
                         </div>
                     ) : (
                         // Detail View (Popup) - Fluid Animation
-                        // Mobile: Fixed Full Screen. Desktop: In-place or Absolute Overlay?
-                        // Current Desktop was in-place inside the 96 width sidebar?
-                        // NO, earlier code had a Detail Panel absolute positioned.
-                        // Wait, viewing line 837: The "Main Card" contains either Header/Search OR Detail View logic?
-                        // Let's check logic at line 849: {!selectedLocation ? (...) : (...)}
-                        // Yes, it SWAPS the content of the sidebar.
-                        // So the Detail View inherits the Sidebar dimensions (w-96).
-
-                        // Mobile Fix: We want Detail View to be FULL WIDTH/HEIGHT if possible, or just taller?
-                        // If it's inside the sidebar `div` (which is now inset-x-2 top-2),
-                        // it will be constrained by the Sidebar container.
-                        // I need to change the Sidebar Container logic if selectedLocation is active?
-
-                        // Actually, for Mobile Detail View, we often want it to cover the map.
-                        // If I leave it as is, it's a card at the top.
-                        // Let's leave it as a card for now, but ensure max-height allows scrolling.
                         <div className="animate-in slide-in-from-right-8 duration-500 ease-out max-h-[80vh] overflow-y-auto md:max-h-[calc(100vh-2rem)]">
                             <div
                                 className={`relative p-4 border-b flex justify-between items-center ${appearance !== 'dark' ? 'border-gray-100 bg-gray-50/50' : 'bg-transparent'}`}
@@ -1332,11 +1277,7 @@ function MapApplication() {
                                                 .filter(r => r.ids.has(locId))
                                                 .map(r => r.term);
 
-                                            // If specific matches found, show them joined. Else show full query (fallback)
-                                            // Fallback is useful if user clicked a point that ISN'T in search results (enabled by non-search mode?)
-                                            // But if searchQuery exists, usually map is filtered.
-                                            // Exception: "Show Regular Points" enabled? 
-                                            // If point is NOT in filtered results, maybe show "Location"? 
+                                            // If specific matches found, we show them joined. Else show full query (fallback)
                                             // Current logic: show matched or query.
                                             const title = matched.length > 0 ? matched.join(', ') : searchQuery;
                                             return title.length > 25 ? title.slice(0, 25) + '...' : title;
