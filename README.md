@@ -1,13 +1,14 @@
 # Searchable City
 
-<img width="4800" height="1200" alt="searchablecityheader" src="https://github.com/user-attachments/assets/c099f957-1381-44ab-80cc-8c40b14b887b" />
+<img width="4800" height="1200" alt="searchablecityheadernewnew" src="https://github.com/user-attachments/assets/4a002a45-a7f8-4bf8-9fcd-258dfa80e2b6" />
+
 
 
 <br>
 
 **The first open-vocabulary semantic atlas of New York City.**
 
-I ran a Vision Language Model on hundreds of thousands of images of Manhattan to create a searchable visual index of the city. This project moves beyond the rigid grid of addresses to map the invisible systems (culture, wealth, infrastructure, etc.) that actually define the urban experience.
+I ran a Vision Language Model on millions of images of New York City to create a searchable visual index of the city. This project moves beyond the rigid grid of addresses to map the invisible systems (culture, wealth, infrastructure, etc.) that actually define the urban experience.
 
 ### [🌐 Interactive Map & Full Story](https://searchable.city/about)
 
@@ -27,11 +28,13 @@ I wanted to explore: if a human can look at a street corner and see "gentrificat
 
 ### Overview
 
-Standard maps rely on manual entry into databases. I used a supercomputer to "watch" the city instead. By generating hundreds of descriptive tags for every street view image in Manhattan, I created a searchable visual index.
+Standard maps rely on manual entry into databases. I used a supercomputer to "watch" the city instead. By generating hundreds of descriptive tags for every street view image in New York City, I created a searchable visual index.
 
 <div align="center">
 <figure>
-<img width="1920" height="945" alt="chinese_searchable_city" src="https://github.com/user-attachments/assets/19ceedba-60e1-495f-91c7-c6ea43db99e6" />
+<img width="1750" height="1009" alt="chinese_searchable_city_new" src="https://github.com/user-attachments/assets/e824e948-2907-490c-855c-0e8c2da3f875" />
+
+  
   <figcaption><em>When we query "Chinese," it successfully delineates Chinatown without knowing a single zip code.</em></figcaption>
 </figure>
 </div>
@@ -41,26 +44,26 @@ When we query **"Chinese,"** the AI identifies architectural patterns, signage d
 
 <div align="center">
 <figure>
+  <img width="1750" height="1009" alt="gothic_searchable_city_new" src="https://github.com/user-attachments/assets/6d78f71f-e180-4326-b47c-76f40bc073c5" />
 
-  <img width="1920" height="945" alt="gothic_searchable_city" src="https://github.com/user-attachments/assets/95429cb3-60b1-4798-8d0e-f0ef85de31d5" />
 
-  <figcaption><em>Querying "Gothic" reveals the historic spine of Manhattan, distinct from the glass of Midtown.</em></figcaption>
+  <figcaption><em>Querying "Gothic" reveals the historic spine of New York City, distinct from the glass of modern skyscrapers.</em></figcaption>
 </figure>
 </div>
 <br>
 
 ### The Ghost in the Machine
 
-This was the most unexpected finding in the dataset. When we queried **"East"** vs **"West,"** the model accurately lit up the respective sides of the island.
+This was the most unexpected finding in the dataset. When we queried **"East"** vs **"West,"** the model accurately lit up the respective sides of Manhattan.
 
 <table>
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/c8673a41-0c74-4ead-a943-b39cc9ac06d4" width="100%" alt="west_searchable_city" />
+<img width="1750" height="1009" alt="west_searchable_city_west" src="https://github.com/user-attachments/assets/5338ed34-46ea-4a52-aac9-b817203e3ec7"/>      
       <br />
       </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/102fc582-9f24-44c3-b0cd-6d5c8e8bf31c" width="100%" alt="east_searchable_city" />
+<img width="1750" height="1009" alt="east_searchable_city_new" src="https://github.com/user-attachments/assets/30c66eee-0160-4a61-ab2a-dc6f38635c26"/>
       <br />
       </td>
   </tr>
@@ -75,7 +78,7 @@ When you stop looking for addresses and start looking for *patterns*, the invisi
 <table>
   <tr>
     <td align="center">
-    <img width="1097" height="945" alt="scaffolding_indepth" src="https://github.com/user-attachments/assets/b909c8b3-0931-4f88-a7b9-10b4dce3f44b" />
+    <img width="1097" height="945" alt="scaffolding_indepth" src="https://github.com/user-attachments/assets/177ef082-9b58-48c3-a933-597eed21d4fa" />
     <figcaption><em>An in-depth look at the query "scaffolding."</em></figcaption>
       <br />
       </td>
@@ -107,8 +110,8 @@ I found over 3,000 unique descriptive tags. Here are some of the ones I thought 
   <tbody>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/8da34fc6-b1dc-4a47-ada3-a3d0a7941cf6" width="100%" alt="bagel" />
-      </td>
+<img width="2354" height="985" alt="bagel" src="https://github.com/user-attachments/assets/9fa24280-bb97-424c-8326-8e8c01fd45e9" />
+  </td>
       <td valign="top">
         <h3>BAGEL</h3>
         <p>The breakfast of champions. Note the complete absence in industrial zones.</p>
@@ -116,7 +119,7 @@ I found over 3,000 unique descriptive tags. Here are some of the ones I thought 
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/953d16ac-0b8e-430a-8603-b3b1aa558244" width="100%" alt="beer" />
+      <img width="2354" height="985" alt="beer" src="https://github.com/user-attachments/assets/f2ca3021-ab99-451a-a481-312b41790dc6" />
       </td>
       <td valign="top">
         <h3>BEER</h3>
@@ -125,29 +128,29 @@ I found over 3,000 unique descriptive tags. Here are some of the ones I thought 
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/d681a289-11b0-4820-955d-2f3c36490229" width="100%" alt="trash" />
+      <img width="2354" height="985" alt="garbage" src="https://github.com/user-attachments/assets/5afce964-2b62-477b-b0e7-c50d3e27696f" />
       </td>
       <td valign="top">
-        <h3>TRASH</h3>
+        <h3>GARBAGE</h3>
         <p>Correlates with commercial density and foot traffic.</p>
       </td>
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/2737f288-c5c1-4341-961a-c7c0b5c3034e" width="100%" alt="graffiti" />
+      <img width="2354" height="985" alt="graffiti" src="https://github.com/user-attachments/assets/a5b370d3-3eca-4540-85e2-cff9c3c48e1a" />
       </td>
       <td valign="top">
         <h3>GRAFFITI</h3>
-        <p>The unauthorized art layer of the Lower East Side.</p>
+        <p>The unauthorized art layer of New York City.</p>
       </td>
     </tr>
     <tr>
       <td>
-        <img src="https://github.com/user-attachments/assets/c893c81c-fcb9-4501-89a2-89b022ec191f" width="100%" alt="baseball" />
+      <img width="2354" height="985" alt="flower" src="https://github.com/user-attachments/assets/45d74557-be2d-45d8-aaff-3e2479126633" />
       </td>
       <td valign="top">
-        <h3>BASEBALL</h3>
-        <p>Reveals the hidden green spaces of the city, from sandlots to stadiums.</p>
+        <h3>FLOWER</h3>
+        <p>The city's landscape punctuated by seasonal blooms.</p>
       </td>
     </tr>
   </tbody>
@@ -169,12 +172,11 @@ Not a list of addresses: a living surface you can query. Search: “flood risk.�
 
 We’re heading toward a continuous, searchable reality. As cameras multiply and refresh cycles compress, the map stops being a document and becomes a question you can ask at any moment. The interface is simple—a search bar—but what it returns is new: a city organized by meaning instead of coordinates.
 
-<img width="1299" height="932" alt="image" src="https://github.com/user-attachments/assets/181bec4e-e689-492e-9345-5285c92457fc" />
+<img width="1500" height="932" alt="chinese_look_new" src="https://github.com/user-attachments/assets/33c4969c-7c60-416e-a0d7-200f9243d170" />
 
-<img width="1317" height="939" alt="image" src="https://github.com/user-attachments/assets/0eac6ae8-5622-409a-ad0f-5ef5a082792b" />
+<img width="1500" height="932" alt="gothic_look_new" src="https://github.com/user-attachments/assets/145a3e44-28c8-41d3-8cf9-2e4383fef4ac" />
 
-<img width="1316" height="931" alt="image" src="https://github.com/user-attachments/assets/a07fe44d-e55e-459d-a50a-78fd68d2c10a" />
-
+<img width="1500" height="932" alt="scaffolding_look_new" src="https://github.com/user-attachments/assets/c5ecd6af-5e20-4bbb-ade4-694412a09549" />
 
 
 ### Special Thanks
