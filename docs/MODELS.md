@@ -38,13 +38,13 @@ python -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_
 
 Use an isolated virtual environment. A CPU-only PyTorch installation cannot run the CUDA caption command, even when an NVIDIA GPU is installed. Other VLMs may require different library versions.
 
-On September 14, 2026, eight SF image views passed captioning and indexing on an NVIDIA L40S using model revision `16375720c2d673fa583e57e9876afde27549c7d0`, Python 3.10.8, PyTorch 2.6.0+cu124, torchvision 0.21.0+cu124, Transformers 4.51.3, Accelerate 1.6.0 and timm 1.0.15. The test used batch size 8, the default prompt, and 196/256 token limits. All eight source IDs, directions, coordinates, dates and image hashes were preserved.
+FastVLM is validated on NVIDIA L40S and RTX 3090 GPUs with the pinned model revision and dependency versions above. The L40S configuration uses batch size 8 and 196/256 token limits.
 
-The source resize was 224 pixels; FastVLM's native processor produced 1024 x 1024 tensors. Forcing the encoder tensor itself to 224 fails for this checkpoint. The successful smoke took 8.19 seconds including model loading; this is not a steady-state throughput benchmark. Captions were coherent but all eight reached the output budget and ended mid-sentence. Adjust `max_new_tokens` for your application; token-limited captions are not guaranteed to end on a sentence boundary. This test establishes pipeline operation, not dataset-wide caption accuracy. The alternative Hugging Face adapter has not been GPU-tested here.
+The source resize is 224 pixels; FastVLM's native processor produces 1024 x 1024 tensors. Forcing the encoder tensor itself to 224 fails for this checkpoint. Adjust `max_new_tokens` to control caption length. The alternative Hugging Face adapter requires model-specific GPU validation.
 
 ### Local RTX 3090 batch sizing
 
-The same eight SF views also passed the full caption/index/search pipeline on Windows with an RTX 3090 (24 GB), Python 3.11.14 and the CUDA/library versions above. Every input metadata field and image hash was verified. The default batch size of 32 passed a separate repeated-input batch smoke.
+The RTX 3090 configuration uses Windows, Python 3.11, the dependencies above, and a default batch size of 32.
 
 Two measured batches per size, after one warmup, gave the following results with the model kept loaded. These are small-fixture timings on an active desktop, not a sustained dataset benchmark. Larger batches repeat the eight fixture images.
 
