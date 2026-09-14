@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local datasets, models and generated outputs
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.env
+.env.*
+!.env.example
+/data/
+runs/
+models/
+*.tar
+*.parquet
+*.sqlite

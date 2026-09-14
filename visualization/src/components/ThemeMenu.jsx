@@ -1,6 +1,6 @@
 import React from 'react';
 import { Palette, Settings } from 'lucide-react';
-import { PRESET_THEMES } from './MapApplication';
+import { PRESET_THEMES } from '../themes';
 
 // Custom dark background
 const DARK_BG = '#272a2f';

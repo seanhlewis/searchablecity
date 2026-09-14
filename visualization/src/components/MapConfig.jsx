@@ -1,9 +1,9 @@
-import React, { useRef, useMemo, memo, forwardRef, useEffect } from 'react';
+import React, { useMemo, memo, forwardRef } from 'react';
 import ReactMapGL, { Source, Layer } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // User must provide a token.
-const MAPBOX_TOKEN = "pk.eyJ1Ijoic2hsMjI1IiwiYSI6ImNtZmVza21rbjA3NjUybHE4OGZqa2cwbTQifQ.du4ZmGipK17OB2Em5FqwSA";
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
 const MapConfig = memo(forwardRef(function MapConfig({ locations, matchedIds, viewState, onViewStateChange, onSelect, onHover, selectedId, appearance, colors, vizMode, showRegularPoints, showPointBorders, pointColors, showBloom }, ref) {
   // We use the forwarded ref if provided, otherwise internal (though internal serves no purpose if not exposed)
@@ -130,7 +130,7 @@ const MapConfig = memo(forwardRef(function MapConfig({ locations, matchedIds, vi
       const id = feature.properties.id;
       const [lon, lat] = feature.geometry.coordinates;
       let tags = [];
-      try { tags = typeof feature.properties.tags === 'string' ? JSON.parse(feature.properties.tags) : feature.properties.tags; } catch (e) { }
+      try { tags = typeof feature.properties.tags === 'string' ? JSON.parse(feature.properties.tags) : feature.properties.tags; } catch { tags = []; }
       onSelect({ i: id, l: [lat, lon], t: tags || [] });
     }
   };

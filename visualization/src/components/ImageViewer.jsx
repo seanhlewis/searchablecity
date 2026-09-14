@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 
-function ImageViewer({ id, lat, lng, angle, setAngle, appearance }) {
+function ImageViewer({ id, lat, lng, angle, appearance }) {
     const [isLoading, setIsLoading] = useState(true);
 
     return (

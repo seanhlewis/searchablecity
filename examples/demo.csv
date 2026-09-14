@@ -1,0 +1,4 @@
+image_id,lat,lng,direction,caption,image_provider
+demo-0,37.77,-122.42,N,A traffic light beside a tree.,synthetic-example
+demo-1,37.771,-122.419,N,A mural covers a brick wall.,synthetic-example
+demo-2,37.772000000000006,-122.418,N,Flowers beside a storefront.,synthetic-example

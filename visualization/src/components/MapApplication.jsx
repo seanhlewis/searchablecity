@@ -17,20 +17,11 @@ function useDebounce(value, delay) {
     return debouncedValue;
 }
 
-export const PRESET_THEMES = {
-    classic: { name: 'Classic', bg: '#3b82f6', hl: '#ef4444' }, // Blue / Red
-    forest: { name: 'Forest', bg: '#059669', hl: '#fbbf24' }, // Green / Amber
-    ocean: { name: 'Ocean', bg: '#0ea5e9', hl: '#a855f7' }, // Sky / Purple
-    nyc: { name: 'Taxi', bg: '#64748b', hl: '#eab308' }, // Slate / Yellow
-    neon: { name: 'Neon', bg: '#2dd4bf', hl: '#f472b6' }, // Teal / Pink
-    sunset: { name: 'Sunset', bg: '#f97316', hl: '#8b5cf6' }, // Orange / Violet
-    minimal: { name: 'Mono', bg: '#171717', hl: '#e5e5e5' }, // Black / White
-    nature: { name: 'Earth', bg: '#57534e', hl: '#84cc16' }, // Stone / Lime
-};
+import { PRESET_THEMES } from '../themes';
 
 // Custom dark background requested by user
 const DARK_BG = '#272a2f';
-const API_BASE = "http://127.0.0.1:5001";
+
 const CDN_BASE = import.meta.env.VITE_CDN_URL || '';
 
 function MapApplication() {
@@ -49,7 +40,6 @@ function MapApplication() {
 
     // Track loaded shards to avoid re-fetching
     const loadedShardsRef = useRef(new Set());
-    const [fetchingShards, setFetchingShards] = useState(false);
 
     // Interruptible Search Transition
     const [isPending, startTransition] = useTransition();
@@ -189,20 +179,10 @@ function MapApplication() {
     const [suggestions, setSuggestions] = useState([]);
     const [isFocused, setIsFocused] = useState(false);
     const [totalImageMatches, setTotalImageMatches] = useState(0);
-    const [isExporting, setIsExporting] = useState(false);
     const [isHelpOpen, setIsHelpOpen] = useState(false);
     const [hasReadStory, setHasReadStory] = useState(false);
 
     // Bitmask Helpers
-    const getBitCount = (mask) => {
-        let count = 0;
-        let m = mask;
-        while (m > 0) {
-            if (m & 1) count++;
-            m >>= 1;
-        }
-        return count;
-    };
 
     const getFirstBearing = (mask) => {
         const bearings = [0, 45, 90, 135, 180, 225, 270, 315];
@@ -362,8 +342,10 @@ function MapApplication() {
         async function loadLocations() {
             try {
                 // 1. Load LEAN Locations (ID + Lat/Lng only)
-                const mod = await import('../data/locations.json');
-                const locs = mod.default;
+                const response = await fetch(import.meta.env.VITE_LOCATIONS_URL || `${CDN_BASE}/data/locations.json`);
+                if (!response.ok) throw new Error('Configure VITE_LOCATIONS_URL or provide public/data/locations.json');
+                const locs = await response.json();
+                if (!Array.isArray(locs)) throw new Error('Locations must be an array');
                 Object.freeze(locs);
                 setLocations(locs);
 
@@ -459,7 +441,6 @@ function MapApplication() {
 
         // ASYNC SHARD FETCHING WRAPPER
         async function runSearch() {
-            setFetchingShards(true);
             try {
                 // 1. Identify Needed Tags -> Shards
                 const requiredShards = new Set();
@@ -527,7 +508,6 @@ function MapApplication() {
                     }));
                 }
 
-                setFetchingShards(false);
 
                 // 3. Execute Search (Synchronous using Cache)
                 startTransition(() => {
@@ -613,13 +593,12 @@ function MapApplication() {
 
             } catch (e) {
                 console.error("Search error:", e);
-                setFetchingShards(false);
             }
         }
 
         runSearch();
 
-    }, [debouncedSearchQuery, loading, isIndexReady]);
+    }, [debouncedSearchQuery, loading, isIndexReady, validLocationIds]);
 
     // --- COLOR ASSIGNMENT (Derived Memo) ---
     const { pointColors: computedPointColors, legendSegments } = useMemo(() => {
@@ -665,7 +644,7 @@ function MapApplication() {
         });
 
         return { pointColors: pColors, legendSegments: legends };
-    }, [rawSearchResults, segmentThemeOverrides, currentColors, activeThemeId, getSegmentColor]);
+    }, [rawSearchResults, segmentThemeOverrides, currentColors, activeThemeId, getSegmentColor, customColors.hl]);
 
     useEffect(() => {
         // console.log('[App] rawSearchResults:', rawSearchResults);
@@ -844,8 +823,8 @@ function MapApplication() {
 
 
     // --- SCREENSHOT LOGIC ---
-    const handleScreenshot = useCallback(async (mode) => {
-        // mode: 'save' (keybind) or 'copy' (requested to be download)
+    const handleScreenshot = useCallback(async () => {
+        // Both the toolbar and keyboard shortcut download through the browser.
         try {
             // Internal Mapbox Canvas
             const mapCanvas = mapRef.current?.getCanvas();
@@ -863,26 +842,13 @@ function MapApplication() {
 
             const filename = generateScreenshotName(searchQuery);
 
-            if (mode === 'save') {
-                // Post to backend
-                const res = await fetch(`${API_BASE}/api/save_screenshot`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: dataUri, filename })
-                });
-                if (!res.ok) throw new Error("Failed to save to disk");
-
-                setScreenshotToast({ message: `Saved: ${filename}`, type: 'success' });
-            } else {
-                // DOWNLOAD as PNG
-                const link = document.createElement('a');
-                link.href = dataUri;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                setScreenshotToast({ message: "Screenshot Downloaded!", type: 'success' });
-            }
+            const link = document.createElement('a');
+            link.href = dataUri;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setScreenshotToast({ message: "Screenshot Downloaded!", type: 'success' });
         } catch (e) {
             console.error(e);
             setScreenshotToast({ message: "Screenshot Failed", type: 'error' });
@@ -1501,7 +1467,7 @@ function MapApplication() {
                             {/* Link to About */}
                             {hasReadStory || new URLSearchParams(window.location.search).get('embed_source') === 'about' ? (
                                 <button
-                                    onClick={(e) => {
+                                    onClick={() => {
                                         setIsHelpOpen(false);
                                         localStorage.setItem('searchable_city_seen_help', 'true');
                                     }}
@@ -1514,7 +1480,7 @@ function MapApplication() {
                                     href="/about"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    onClick={(e) => {
+                                    onClick={() => {
                                         setHasReadStory(true);
                                         localStorage.setItem('searchable_city_seen_help', 'true');
                                         // Do NOT close modal

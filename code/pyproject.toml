@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "searchablecity"
+version = "0.1.0"
+description = "Geolocated image captioning and search for Searchable.City"
+requires-python = ">=3.10"
+dependencies = ["Pillow>=10", "pyarrow>=14"]
+
+[project.optional-dependencies]
+vlm = ["torch>=2.4", "torchvision>=0.19", "transformers>=4.49,<5", "accelerate>=1", "timm>=1", "einops", "sentencepiece", "protobuf"]
+
+[project.scripts]
+searchablecity = "searchablecity.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

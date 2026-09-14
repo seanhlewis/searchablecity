@@ -1,12 +1,10 @@
-import React, { memo, useState } from 'react';
-import { PRESET_THEMES } from './MapApplication';
+import React, { memo } from 'react';
+import { PRESET_THEMES } from '../themes';
 import ThemeMenu from './ThemeMenu';
 
 const SearchLegend = memo(function SearchLegend({
     segments,
-    onThemeCycle,
     onThemeSelect,
-    activeThemeId,
     appearance,
     customColors,
     setCustomColors,

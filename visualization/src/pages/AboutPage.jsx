@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import QuizSection from '../components/QuizSection';
 import TimelapseSection from '../components/TimelapseSection';
 import ManhattanMap from '../components/ManhattanMap';
-import TransformControls from '../components/TransformControls';
 import './AboutPage.css';
 
 
@@ -23,7 +22,7 @@ const Typewriter = ({ text, delay = 0 }) => {
     useEffect(() => {
         progressRef.current = 0;
         currentLenRef.current = 0;
-        setDisplayLength(0);
+        const resetFrame = requestAnimationFrame(() => setDisplayLength(0));
 
         const animate = () => {
             // 1. Calculate Target (Accelerating Curve)
@@ -59,6 +58,7 @@ const Typewriter = ({ text, delay = 0 }) => {
 
         return () => {
             clearTimeout(startTimeout);
+            cancelAnimationFrame(resetFrame);
             cancelAnimationFrame(requestRef.current);
         };
     }, [text, delay]);
@@ -209,8 +209,8 @@ const CrossFadeMap = ({ src, activeTag, transformOverride }) => {
     const [bufferSrc, setBufferSrc] = useState(src);
     const [opacity, setOpacity] = useState(1);
 
-    useEffect(() => {
-        if (src !== displaySrc) {
+    // Reset the transition before committing a render with a new source.
+    if (src !== displaySrc) {
             setBufferSrc(displaySrc);
             setDisplaySrc(src);
             setOpacity(0);
@@ -218,8 +218,7 @@ const CrossFadeMap = ({ src, activeTag, transformOverride }) => {
             // Note: We do NOT set opacity automatically here.
             // We wait for the onLoad event of the new image to trigger the fade.
             // This prevents fading in a blank/loading image.
-        }
-    }, [src, displaySrc]);
+    }
 
     // Added COMPASS to prevent zoom-out on Ghost in the Machine section
     // If transformOverride is provided, use it. Otherwise calculate based on tag.
@@ -286,7 +285,7 @@ const AboutPage = () => {
     const [splitVisible, setSplitVisible] = useState(false);
     const [galleryVisible, setGalleryVisible] = useState(false);
     const [visualCultureData, setVisualCultureData] = useState([]);
-    const [transformOverride, setTransformOverride] = useState(null); // Leave null to use defaults initially, or set DEFAULT_TRANSFORM
+    const transformOverride = null; // Leave null to use defaults initially, or set DEFAULT_TRANSFORM
     const [streamImg, setStreamImg] = useState(`${IMG_BASE}/skyline_2026-01-01_21-46-22.png`);
     const [activeStreamIndex, setActiveStreamIndex] = useState(null);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -315,17 +314,10 @@ const AboutPage = () => {
     const machineEyeIndexRef = useRef(0);
     useEffect(() => { machineEyeIndexRef.current = machineEyeIndex; }, [machineEyeIndex]);
 
-    // Sync Background with Carousel Index (Machine Eye Section)
-    useEffect(() => {
-        if (activeTag === 'MACHINE EYE') {
-            setMainImg(`${IMG_BASE}/${MACHINE_EYE_ITEMS[machineEyeIndex].bg}`);
-        }
-    }, [machineEyeIndex, activeTag]);
-
-
+    const displayedMainImg = activeTag === 'MACHINE EYE'
+        ? `${IMG_BASE}/${MACHINE_EYE_ITEMS[machineEyeIndex].bg}` : mainImg;
 
     const splitViewRef = useRef(null);
-    const streamImgRef = useRef(null);
     const streamItemsRef = useRef([]);
 
     // Observer for Narrative Steps
@@ -469,15 +461,8 @@ const AboutPage = () => {
         }
     };
 
-    // Effect to update Image and Scroll List when Active Index changes
-    useEffect(() => {
-        if (activeStreamIndex !== null) {
-            const item = STREAM_ITEMS[activeStreamIndex];
-            setStreamImg(`${IMG_BASE}/${item.img}`);
-
-
-        }
-    }, [activeStreamIndex]);
+    const displayedStreamImg = activeStreamIndex === null
+        ? streamImg : `${IMG_BASE}/${STREAM_ITEMS[activeStreamIndex].img}`;
 
     // Preload Images
     useEffect(() => {
@@ -584,7 +569,7 @@ const AboutPage = () => {
                         </h2>
                     </div>
 
-                    <CrossFadeMap src={mainImg} activeTag={activeTag} />
+                    <CrossFadeMap src={displayedMainImg} activeTag={activeTag} />
 
                     <div id="split-view" className={splitVisible ? 'visible' : ''} ref={splitViewRef}>
                         <div className="split-pane" id="pane-west">
@@ -909,7 +894,7 @@ const AboutPage = () => {
 
             <section id="data-stream-section">
                 <div className="stream-sticky-map">
-                    <CrossFadeMap src={streamImg} activeTag={null} transformOverride="none" />
+                    <CrossFadeMap src={displayedStreamImg} activeTag={null} transformOverride="none" />
                 </div>
                 <div className="stream-list">
                     <div style={{ marginBottom: '4rem' }}>

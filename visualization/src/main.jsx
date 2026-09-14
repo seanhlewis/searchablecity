@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import './index.css'
 import App from './App.jsx'
 
-posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
+if (import.meta.env.VITE_POSTHOG_KEY && !window.location.pathname.startsWith('/dataset')) posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
   api_host: import.meta.env.VITE_POSTHOG_HOST,
   ui_host: 'https://us.posthog.com',
   person_profiles: 'identified_only',

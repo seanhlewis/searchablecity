@@ -1,0 +1,13 @@
+{
+  "backend": "huggingface",
+  "model": "HuggingFaceTB/SmolVLM-256M-Instruct",
+  "revision": null,
+  "prompt": "Describe this image.",
+  "short_edge": 224,
+  "batch_size": 4,
+  "min_new_tokens": 0,
+  "max_new_tokens": 256,
+  "device": "cuda",
+  "dtype": "auto",
+  "trust_remote_code": false
+}

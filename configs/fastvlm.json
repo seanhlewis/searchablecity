@@ -1,0 +1,13 @@
+{
+  "backend": "fastvlm",
+  "model": "apple/FastVLM-0.5B",
+  "revision": "16375720c2d673fa583e57e9876afde27549c7d0",
+  "prompt": "Describe this image.",
+  "short_edge": 224,
+  "batch_size": 32,
+  "min_new_tokens": 196,
+  "max_new_tokens": 256,
+  "device": "cuda",
+  "dtype": "auto",
+  "trust_remote_code": true
+}
